@@ -1,0 +1,37 @@
+https://www.cockroachlabs.com/get-started-cockroachdb/
+
+https://binaries.cockroachdb.com/cockroach-v21.1.7.windows-6.2-amd64.zip
+
+https://www.cockroachlabs.com/docs/v21.1/start-a-local-cluster
+
+
+cockroach sql --insecure --host=localhost:26257
+CREATE DATABASE bank;
+CREATE TABLE bank.accounts (id INT PRIMARY KEY, balance DECIMAL);
+INSERT INTO bank.accounts VALUES (1, 1000.50);
+SELECT * FROM bank.accounts;
+\q
+
+cockroach sql --insecure --host=localhost:26258
+SELECT * FROM bank.accounts;
+\q
+
+cockroach sql --insecure --host=localhost:26259
+SELECT * FROM bank.accounts;
+\q
+
+cockroach workload init movr 'postgresql://root@localhost:26257?sslmode=disable'
+
+cockroach workload run movr --duration=5m 'postgresql://root@localhost:26257?sslmode=disable'
+
+http://localhost:8080/
+http://localhost:8081/
+http://localhost:8082/
+
+cockroach node drain --insecure --host=localhost:26257
+cockroach node drain --insecure --host=localhost:26258
+cockroach node drain --insecure --host=localhost:26259
+
+cockroach quit --insecure --host=localhost:26257
+cockroach quit --insecure --host=localhost:26258
+cockroach quit --insecure --host=localhost:26259
